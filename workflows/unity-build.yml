@@ -49,7 +49,7 @@ jobs:
         with:
           build-targets: ${{ matrix.build-target }}
           # Path to your project's version file.
-          version-file-path: 'MyUnityProject/ProjectSettings/ProjectVersion.txt'
+          # version-file-path: 'MyUnityProject/ProjectSettings/ProjectVersion.txt'
 
       # Activate the unity license
       - uses: xrtk/activate-unity-license@v5
