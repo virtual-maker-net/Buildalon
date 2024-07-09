@@ -67,6 +67,15 @@ jobs:
           log-name: 'project-validation'
           args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
+      # Run editor only Unit Tests
+      - uses: xrtk/unity-action@v6
+        if: ${{ inputs.test == 'true' }}
+        name: '${{ inputs.build-target }}-Tests'
+        with:
+          log-name: '${{ inputs.build-target }}-Tests'
+          build-target: '${{ inputs.build-target }}'
+          args: '-nographics -batchmode -runEditorTests'
+
       # Build the project
       - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Build'
