@@ -69,7 +69,6 @@ jobs:
 
       # Run editor only Unit Tests
       - uses: xrtk/unity-action@v6
-        if: ${{ inputs.test == 'true' }}
         name: '${{ inputs.build-target }}-Tests'
         with:
           log-name: '${{ inputs.build-target }}-Tests'
