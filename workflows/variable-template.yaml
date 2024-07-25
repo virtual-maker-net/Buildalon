@@ -111,10 +111,7 @@ jobs:
           path: |
             ${{ env.UNITY_PROJECT_PATH }}/**/*.log
             ${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/
-            !${{ env.UNITY_PROJECT_PATH }}/Library/**/*
-            !${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/*_BackUpThisFolder_ButDontShipItWithYourGame/**
-            !${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/*_BurstDebugInformation_DoNotShip/**
-
+#EXCLUDE_PATHS#
       # Clean up the build artifacts for the next run
       - name: Clean Artifacts
         shell: pwsh
