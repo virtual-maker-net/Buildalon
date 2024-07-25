@@ -67,16 +67,16 @@ jobs:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform EditMode'
           log-name: '${{ matrix.build-target }}-Tests'
-#EDITOR_UNIT_TESTS_END#
-#PLAY_UNIT_TESTS_START#      # Run Play Mode Unit Tests
+
+#EDITOR_UNIT_TESTS_END##PLAY_UNIT_TESTS_START#      # Run Play Mode Unit Tests
       - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-PlayMode-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
           log-name: '${{ matrix.build-target }}-Tests'
-#PLAY_UNIT_TESTS_END#
-      # Build the project
+
+#PLAY_UNIT_TESTS_END#      # Build the project
       - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Build'
         with:
