@@ -62,20 +62,20 @@ jobs:
           log-name: 'project-validation'
           args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
-      - uses: xrtk/unity-action@v6
+#EDITORUNITTESTSSTART#      - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Editor-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform EditMode'
           log-name: '${{ matrix.build-target }}-Tests'
-
-      - uses: xrtk/unity-action@v6
+#EDITORUNITTESTSEND#
+#PLAYUNITTESTSSTART#      - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-PlayMode-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
           log-name: '${{ matrix.build-target }}-Tests'
-
+#PLAYUNITTESTSEND#
       # Build the project
       - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Build'
