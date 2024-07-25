@@ -10,6 +10,12 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      clean:
+        type: boolean
+        default: false
+        required: false
+        description: 'cleans the library folder and deletes cached items'
 
 # Cancels any ongoing builds when a new commit is pushed to the same branch
 concurrency:
@@ -20,6 +26,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       #INCLUDEPROLINES#max-parallel: 2 # Use this if you're activating pro license with matrix
       matrix:
         include:
@@ -27,6 +34,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          clean: ${{ github.event.inputs.clean }}
 
         # Installs the Unity Editor based on your project version text file
         # sets -> env.UNITY_EDITOR_PATH
@@ -46,23 +55,82 @@ jobs:
           #INCLUDEPROLINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
           license-type: '#LICENSECHOICE#' # Chooses license type to use [ Personal, Professional ]
 
-      #INCLUDEEDITORUNITTESTS#- uses: xrtk/unity-action@v6
-      #INCLUDEEDITORUNITTESTS#  name: '${{ matrix.build-target }}-Editor-Tests'
-      #INCLUDEEDITORUNITTESTS#  with:
-      #INCLUDEEDITORUNITTESTS#    build-target: '${{ matrix.build-target }}'
-      #INCLUDEEDITORUNITTESTS#    args: '-runTests -batchmode -testPlatform EditMode'
-      #INCLUDEEDITORUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
-
-      #INCLUDEPLAYUNITTESTS#- uses: xrtk/unity-action@v6
-      #INCLUDEPLAYUNITTESTS#  name: '${{ matrix.build-target }}-PlayMode-Tests'
-      #INCLUDEPLAYUNITTESTS#  with:
-      #INCLUDEPLAYUNITTESTS#    build-target: '${{ matrix.build-target }}'
-      #INCLUDEPLAYUNITTESTS#    args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
-      #INCLUDEPLAYUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
-
-      - name: Unity Build (${{ matrix.build-target }})
-        uses: xrtk/unity-build@v6
+      # Open the project to check for any issues like script compilation errors
+      - uses: xrtk/unity-action@v6
+        name: Project Validation
         with:
-          build-target: ${{ matrix.build-target }}
+          log-name: 'project-validation'
+          args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
-# Initially created using the Buildalon Action Builder
+      - uses: xrtk/unity-action@v6
+        name: '${{ matrix.build-target }}-Editor-Tests'
+        with:
+          build-target: '${{ matrix.build-target }}'
+          args: '-runTests -batchmode -testPlatform EditMode'
+          log-name: '${{ matrix.build-target }}-Tests'
+
+      - uses: xrtk/unity-action@v6
+        name: '${{ matrix.build-target }}-PlayMode-Tests'
+        with:
+          build-target: '${{ matrix.build-target }}'
+          args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
+          log-name: '${{ matrix.build-target }}-Tests'
+
+      # Build the project
+      - uses: xrtk/unity-action@v6
+        name: '${{ matrix.build-target }}-Build'
+        with:
+          log-name: '${{ matrix.build-target }}-Build'
+          build-target: '${{ matrix.build-target }}'
+          args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.StartCommandLineBuild'
+
+      # Wait for the build to complete
+      - name: Wait for unity process to exit
+        shell: pwsh
+        run: |
+          # Wait for unity process to exit
+          $processIdFile = Join-Path $env:GITHUB_WORKSPACE "unity-process-id.txt"
+
+          if (Test-Path $processIdFile) {
+            $processId = Get-Content $processIdFile
+            Write-Host "::debug::Unity Process ID found: $processId"
+            $unityProcess = Get-Process -Id $processId -ErrorAction SilentlyContinue
+            if ($unityProcess -and !$unityProcess.HasExited) {
+              Write-Host "::debug::Killing Unity process with PID $processId"
+              Stop-Process -Id $processId -Force
+            }
+          }
+
+      # Upload the build artifacts to Github
+      - uses: actions/upload-artifact@v4
+        name: Upload Artifacts
+        with:
+          compression-level: 0 # None
+          retention-days: 1 # How long to keep the artifacts
+          name: '${{ github.run_number }}.${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.build-target }}-Artifacts'
+          path: |
+            ${{ env.UNITY_PROJECT_PATH }}/**/*.log
+            ${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/
+            !${{ env.UNITY_PROJECT_PATH }}/Library/**/*
+            !${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/*_BackUpThisFolder_ButDontShipItWithYourGame/**
+            !${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/*_BurstDebugInformation_DoNotShip/**
+
+      # Clean up the build artifacts for the next run
+      - name: Clean Artifacts
+        shell: pwsh
+        run: |
+          # Clean Logs
+          Get-ChildItem -Path "${{ env.UNITY_PROJECT_PATH }}" -File -Filter "*.log" -Recurse | Remove-Item -Force
+
+          $artifacts = "${{ env.UNITY_PROJECT_PATH }}/Builds"
+          Write-Host "::debug::Build artifacts path: $artifacts"
+
+          if (Test-Path -Path $artifacts) {
+            try {
+              Remove-Item $artifacts -Recurse -Force
+            } catch {
+              Write-Warning "Failed to delete artifacts folder file: $_"
+            }
+          } else {
+            Write-Host "::debug::Artifacts folder not found."
+          }
