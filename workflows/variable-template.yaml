@@ -26,34 +26,34 @@ jobs:
 #PLATFORMS#
 
     steps:
-      - uses: actions/checkout@v#CHECKOUTVER#
+      - uses: actions/checkout@v4
 
         # Installs the Unity Editor based on your project version text file
         # sets -> env.UNITY_EDITOR_PATH
         # sets -> env.UNITY_PROJECT_PATH
         # https://github.com/XRTK/unity-setup
-      - uses: xrtk/unity-setup@v#UNITYSETUPVER#
+      - uses: xrtk/unity-setup@v7
         with:
           build-targets: ${{ matrix.build-target }}
           version-file-path: '#PROJECTPATHPREFIX#ProjectSettings/ProjectVersion.txt'
 
         # Activates the installation with the provided credentials
         # https://github.com/XRTK/activate-unity-license
-      - uses: xrtk/activate-unity-license@v#UNITYLICENSEVER#
+      - uses: xrtk/activate-unity-license@v5
         with:
           username: ${{ secrets.UNITY_USERNAME }}
           password: ${{ secrets.UNITY_PASSWORD }}
           #INCLUDEPROLINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
           license-type: '#LICENSECHOICE#' # Chooses license type to use [ Personal, Professional ]
 
-      #INCLUDEEDITORUNITTESTS#- uses: xrtk/unity-action@v#UNITYACTIONVER#
+      #INCLUDEEDITORUNITTESTS#- uses: xrtk/unity-action@v6
       #INCLUDEEDITORUNITTESTS#  name: '${{ matrix.build-target }}-Editor-Tests'
       #INCLUDEEDITORUNITTESTS#  with:
       #INCLUDEEDITORUNITTESTS#    build-target: '${{ matrix.build-target }}'
       #INCLUDEEDITORUNITTESTS#    args: '-runTests -batchmode -testPlatform EditMode'
       #INCLUDEEDITORUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
 
-      #INCLUDEPLAYUNITTESTS#- uses: xrtk/unity-action@v#UNITYACTIONVER#
+      #INCLUDEPLAYUNITTESTS#- uses: xrtk/unity-action@v6
       #INCLUDEPLAYUNITTESTS#  name: '${{ matrix.build-target }}-PlayMode-Tests'
       #INCLUDEPLAYUNITTESTS#  with:
       #INCLUDEPLAYUNITTESTS#    build-target: '${{ matrix.build-target }}'
@@ -61,7 +61,7 @@ jobs:
       #INCLUDEPLAYUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
 
       - name: Unity Build (${{ matrix.build-target }})
-        uses: xrtk/unity-build@v#UNITYBUILDVER#
+        uses: xrtk/unity-build@v6
         with:
           build-target: ${{ matrix.build-target }}
 
