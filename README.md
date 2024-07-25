@@ -40,7 +40,7 @@ Buildalon Works with Github Actions. You define actions for the runner machine t
   - Set `pull_request/branches` to the branches you want to build when a pull request is created.
   - Set `version-file-path` to the path of your project's `ProjectVersion.txt`.
   - Set `license-type` to `Personal` or `Pro`.
-  - Note: The `Buildalon-windows` label tells Github to run the workflow on a Buildalon runner.
+  - Note: The `5mB-windows` label tells Github to run the workflow on a Buildalon runner.
 
 ## Add secrets required to activate your license
 
