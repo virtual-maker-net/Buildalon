@@ -3,10 +3,10 @@ name: Buildalon Unity Build
 on:
   push:
     branches:
-#PUSHBRANCHES#
+#PUSH_BRANCHES#
   pull_request:
     branches:
-#PRBRANCHES#
+#PR_BRANCHES#
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      #INCLUDEPROLINES#max-parallel: 2 # Use this if you're activating pro license with matrix
+      #INCLUDE_PRO_LINES#max-parallel: 2 # Use this if you're activating pro license with matrix
       matrix:
         include:
 #PLATFORMS#
@@ -52,8 +52,8 @@ jobs:
         with:
           username: ${{ secrets.UNITY_USERNAME }}
           password: ${{ secrets.UNITY_PASSWORD }}
-          #INCLUDEPROLINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
-          license-type: '#LICENSECHOICE#' # Chooses license type to use [ Personal, Professional ]
+          #INCLUDE_PRO_LINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
+          license-type: '#LICENSE_CHOICE#' # Chooses license type to use [ Personal, Professional ]
 
       # Open the project to check for any issues like script compilation errors
       - uses: xrtk/unity-action@v6
@@ -62,20 +62,20 @@ jobs:
           log-name: 'project-validation'
           args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
-#EDITORUNITTESTSSTART#      - uses: xrtk/unity-action@v6
+#EDITOR_UNIT_TESTS_START#      - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Editor-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform EditMode'
           log-name: '${{ matrix.build-target }}-Tests'
-#EDITORUNITTESTSEND#
-#PLAYUNITTESTSSTART#      - uses: xrtk/unity-action@v6
+#EDITOR_UNIT_TESTS_END#
+#PLAY_UNIT_TESTS_START#      - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-PlayMode-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
           log-name: '${{ matrix.build-target }}-Tests'
-#PLAYUNITTESTSEND#
+#PLAY_UNIT_TESTS_END#
       # Build the project
       - uses: xrtk/unity-action@v6
         name: '${{ matrix.build-target }}-Build'
