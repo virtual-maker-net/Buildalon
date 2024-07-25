@@ -27,7 +27,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      #INCLUDE_PRO_LINES#max-parallel: 2 # Use this if you're activating pro license with matrix
       matrix:
         include:
 #PLATFORMS#
