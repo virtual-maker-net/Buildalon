@@ -1,0 +1,68 @@
+name: Buildalon Unity Build
+
+on:
+  push:
+    branches:
+#PUSHBRANCHES#
+  pull_request:
+    branches:
+#PRBRANCHES#
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Cancels any ongoing builds when a new commit is pushed to the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ ( github.event_name == 'pull_request' || github.event.action == 'synchronize' ) }}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      #INCLUDEPROLINES#max-parallel: 2 # Use this if you're activating pro license with matrix
+      matrix:
+        include:
+#PLATFORMS#
+
+    steps:
+      - uses: actions/checkout@v#CHECKOUTVER#
+
+        # Installs the Unity Editor based on your project version text file
+        # sets -> env.UNITY_EDITOR_PATH
+        # sets -> env.UNITY_PROJECT_PATH
+        # https://github.com/XRTK/unity-setup
+      - uses: xrtk/unity-setup@v#UNITYSETUPVER#
+        with:
+          build-targets: ${{ matrix.build-target }}
+          version-file-path: '#PROJECTPATHPREFIX#ProjectSettings/ProjectVersion.txt'
+
+        # Activates the installation with the provided credentials
+        # https://github.com/XRTK/activate-unity-license
+      - uses: xrtk/activate-unity-license@v#UNITYLICENSEVER#
+        with:
+          username: ${{ secrets.UNITY_USERNAME }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+          #INCLUDEPROLINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
+          license-type: '#LICENSECHOICE#' # Chooses license type to use [ Personal, Professional ]
+
+      #INCLUDEEDITORUNITTESTS#- uses: xrtk/unity-action@v#UNITYACTIONVER#
+      #INCLUDEEDITORUNITTESTS#  name: '${{ matrix.build-target }}-Editor-Tests'
+      #INCLUDEEDITORUNITTESTS#  with:
+      #INCLUDEEDITORUNITTESTS#    build-target: '${{ matrix.build-target }}'
+      #INCLUDEEDITORUNITTESTS#    args: '-runTests -batchmode -testPlatform EditMode'
+      #INCLUDEEDITORUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
+
+      #INCLUDEPLAYUNITTESTS#- uses: xrtk/unity-action@v#UNITYACTIONVER#
+      #INCLUDEPLAYUNITTESTS#  name: '${{ matrix.build-target }}-PlayMode-Tests'
+      #INCLUDEPLAYUNITTESTS#  with:
+      #INCLUDEPLAYUNITTESTS#    build-target: '${{ matrix.build-target }}'
+      #INCLUDEPLAYUNITTESTS#    args: '-runTests -batchmode -testPlatform ${{ matrix.build-target }}'
+      #INCLUDEPLAYUNITTESTS#    log-name: '${{ matrix.build-target }}-Tests'
+
+      - name: Unity Build (${{ matrix.build-target }})
+        uses: xrtk/unity-build@v#UNITYBUILDVER#
+        with:
+          build-target: ${{ matrix.build-target }}
+
+# Initially created using the Buildalon Action Builder
