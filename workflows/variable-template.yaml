@@ -37,17 +37,17 @@ jobs:
         with:
           clean: ${{ github.event.inputs.clean }}
 
-        # Installs the Unity Editor based on your project version text file
-        # sets -> env.UNITY_EDITOR_PATH
-        # sets -> env.UNITY_PROJECT_PATH
-        # https://github.com/XRTK/unity-setup
+      # Installs the Unity Editor based on your project version text file
+      # sets -> env.UNITY_EDITOR_PATH
+      # sets -> env.UNITY_PROJECT_PATH
+      # https://github.com/XRTK/unity-setup
       - uses: xrtk/unity-setup@v7
         with:
           build-targets: ${{ matrix.build-target }}
           version-file-path: '#PROJECTPATHPREFIX#ProjectSettings/ProjectVersion.txt'
 
-        # Activates the installation with the provided credentials
-        # https://github.com/XRTK/activate-unity-license
+      # Activates the installation with the provided credentials
+      # https://github.com/XRTK/activate-unity-license
       - uses: xrtk/activate-unity-license@v5
         with:
           username: ${{ secrets.UNITY_USERNAME }}
