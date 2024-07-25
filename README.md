@@ -1,8 +1,8 @@
-# 5mB
+# Buildalon
 
-Welcome to 5mB!
+Welcome to Buildalon!
 
-5mB allows you to:
+Buildalon allows you to:
 - Automatically generate build of your Unity project on a VM in the cloud.
 - Your entire VM is cached to ensure so iterative builds are fast.
 - Automatically run tests.
@@ -15,9 +15,9 @@ Need help? Get support on Discord.
 - A Unity project you want to build.
 - A Unity license to build the project (Personal, Pro, etc.).
 - Your Unity project should be pushed to a Github repository.
-- Sign up for 5mB here.
+- Sign up for Buildalon here.
 
-## Install the 5mB Github App
+## Install the Buildalon Github App
 
 TODO: need to make the app public to see what the installation page looks like.
 
@@ -31,7 +31,7 @@ and select from one of the installation options.
 
 ## Create a build workflow
 
-5mB Works with Github Actions. You define actions for the runner machine to perform by writing a workflow file. We provide a few samples in the `workflow` directory. Here's how to setup a simple Unity build:
+Buildalon Works with Github Actions. You define actions for the runner machine to perform by writing a workflow file. We provide a few samples in the `workflow` directory. Here's how to setup a simple Unity build:
 
 - Create the folder `.github\workflows` in your project repo.
 - Copy the [unity-build.yml](workflows\unity-build.yml) workflow into this folder.
@@ -40,7 +40,7 @@ and select from one of the installation options.
   - Set `pull_request/branches` to the branches you want to build when a pull request is created.
   - Set `version-file-path` to the path of your project's `ProjectVersion.txt`.
   - Set `license-type` to `Personal` or `Pro`.
-  - Note: The `5mB-windows` label tells Github to run the workflow on a 5mB runner.
+  - Note: The `Buildalon-windows` label tells Github to run the workflow on a Buildalon runner.
 
 ## Add secrets required to activate your license
 
@@ -71,7 +71,7 @@ To activate new two factor authentication for your Unity account:
 
 ## Run a Build!
 
-Commit and push your changes, then visit the `Action` tab in Github to see your build run. 5mB will allocate a dedicated virtual machine to run your workflow.
+Commit and push your changes, then visit the `Action` tab in Github to see your build run. Buildalon will allocate a dedicated virtual machine to run your workflow.
 
 The first time it runs, your workflow will install Unity and build your project from scratch. Subsequent runs will use the same virtual machine and build files, which should speed up the build significantly.
 
