@@ -38,30 +38,29 @@ jobs:
       # Installs the Unity Editor based on your project version text file
       # sets -> env.UNITY_EDITOR_PATH
       # sets -> env.UNITY_PROJECT_PATH
-      # https://github.com/XRTK/unity-setup
-      - uses: xrtk/unity-setup@v7
+      - uses: buildalon/unity-setup@v1
         with:
           build-targets: ${{ matrix.build-target }}
-          version-file-path: '#PROJECT_PATH_PREFIX#ProjectSettings/ProjectVersion.txt'
+          version-file: '#PROJECT_PATH_PREFIX#ProjectSettings/ProjectVersion.txt'
 
       # Activates the installation with the provided credentials
       # https://github.com/XRTK/activate-unity-license
-      - uses: xrtk/activate-unity-license@v5
+      - uses: buildalon/activate-unity-license@v1
         with:
+          license: '#LICENSE_CHOICE#' # Chooses license type to use [ Personal, Professional ]
           username: ${{ secrets.UNITY_USERNAME }}
           password: ${{ secrets.UNITY_PASSWORD }}
           #INCLUDE_PRO_LINES#serial: ${{ secrets.UNITY_SERIAL }} # Used for pro license activations
-          license-type: '#LICENSE_CHOICE#' # Chooses license type to use [ Personal, Professional ]
 
       # Open the project to check for any issues like script compilation errors
-      - uses: xrtk/unity-action@v6
+      - uses: buildalon/unity-action@v1
         name: Project Validation
         with:
           log-name: 'project-validation'
           args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
 #EDITOR_UNIT_TESTS_START#      # Run Edit Mode Unit Tests
-      - uses: xrtk/unity-action@v6
+      - uses: buildalon/unity-action@v1
         name: '${{ matrix.build-target }}-Editor-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
@@ -69,7 +68,7 @@ jobs:
           log-name: '${{ matrix.build-target }}-Tests'
 
 #EDITOR_UNIT_TESTS_END##PLAY_UNIT_TESTS_START#      # Run Play Mode Unit Tests
-      - uses: xrtk/unity-action@v6
+      - uses: buildalon/unity-action@v1
         name: '${{ matrix.build-target }}-PlayMode-Tests'
         with:
           build-target: '${{ matrix.build-target }}'
@@ -77,29 +76,12 @@ jobs:
           log-name: '${{ matrix.build-target }}-Tests'
 
 #PLAY_UNIT_TESTS_END#      # Build the project
-      - uses: xrtk/unity-action@v6
+      - uses: buildalon/unity-action@v1
         name: '${{ matrix.build-target }}-Build'
         with:
           log-name: '${{ matrix.build-target }}-Build'
           build-target: '${{ matrix.build-target }}'
           args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.StartCommandLineBuild'
-
-      # Wait for the build to complete
-      - name: Wait for unity process to exit
-        shell: pwsh
-        run: |
-          # Wait for unity process to exit
-          $processIdFile = Join-Path $env:GITHUB_WORKSPACE "unity-process-id.txt"
-
-          if (Test-Path $processIdFile) {
-            $processId = Get-Content $processIdFile
-            Write-Host "::debug::Unity Process ID found: $processId"
-            $unityProcess = Get-Process -Id $processId -ErrorAction SilentlyContinue
-            if ($unityProcess -and !$unityProcess.HasExited) {
-              Write-Host "::debug::Killing Unity process with PID $processId"
-              Stop-Process -Id $processId -Force
-            }
-          }
 
       # Upload the build artifacts to Github
       - uses: actions/upload-artifact@v4
