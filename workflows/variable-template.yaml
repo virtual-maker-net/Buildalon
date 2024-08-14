@@ -57,7 +57,7 @@ jobs:
         name: Project Validation
         with:
           log-name: 'project-validation'
-          args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
+          args: '-batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.ValidateProject'
 
 #EDITOR_UNIT_TESTS_START#      # Run Edit Mode Unit Tests
       - uses: buildalon/unity-action@v1
@@ -81,7 +81,7 @@ jobs:
         with:
           log-name: '${{ matrix.build-target }}-Build'
           build-target: '${{ matrix.build-target }}'
-          args: '-quit -batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.StartCommandLineBuild'
+          args: '-batchmode -executeMethod Utilities.Editor.BuildPipeline.UnityPlayerBuildTools.StartCommandLineBuild'
 
       # Upload the build artifacts to Github
       - uses: actions/upload-artifact@v4
