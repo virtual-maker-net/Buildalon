@@ -92,6 +92,7 @@ jobs:
           retention-days: 1 # How long to keep the artifacts
           name: '${{ github.run_number }}.${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.build-target }}-Artifacts'
           path: |
+            ${{ env.UNITY_PROJECT_PATH }}/**/*.xml
             ${{ env.UNITY_PROJECT_PATH }}/**/*.log
             ${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/
 #EXCLUDE_PATHS#
