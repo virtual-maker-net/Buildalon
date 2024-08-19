@@ -86,7 +86,7 @@ jobs:
       # Upload the build artifacts to Github
       - uses: actions/upload-artifact@v4
         name: Upload Artifacts
-        if: success() || failed()
+        if: success() || failure()
         with:
           compression-level: 0 # None
           retention-days: 1 # How long to keep the artifacts
