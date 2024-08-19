@@ -65,7 +65,7 @@ jobs:
         with:
           build-target: '${{ matrix.build-target }}'
           args: '-runTests -batchmode -testPlatform EditMode "${{ github.workspace }}/Logs/EditMode-test-results.xml"'
-          log-name: '${{ matrix.build-target }}-Tests'
+          log-name: 'EditMode-Tests'
 
 #EDITOR_UNIT_TESTS_END##PLAY_UNIT_TESTS_START#      # Run Play Mode Unit Tests
       - uses: buildalon/unity-action@v1
