@@ -95,6 +95,9 @@ jobs:
             ${{ env.UNITY_PROJECT_PATH }}/**/*.xml
             ${{ env.UNITY_PROJECT_PATH }}/**/*.log
             ${{ env.UNITY_PROJECT_PATH }}/Builds/${{ matrix.build-target }}/
+            !${{ env.UNITY_PROJECT_PATH || github.workspace }}/Library/**/*
+            !/**/*_BackUpThisFolder_ButDontShipItWithYourGame/**
+            !/**/*_BurstDebugInformation_DoNotShip/**
 #EXCLUDE_PATHS#
       # Clean up the build artifacts for the next run
       - name: Clean Artifacts
