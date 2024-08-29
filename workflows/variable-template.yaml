@@ -33,9 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          clean: ${{ github.event.inputs.clean == 'true' }}
-#LFS#
-#SUBMODULES#
+          clean: ${{ github.event.inputs.clean == 'true' }} #LFS##SUBMODULES##PRIVATESUBMODULES#
 
       # Installs the Unity Editor based on your project version text file
       # sets -> env.UNITY_EDITOR_PATH
