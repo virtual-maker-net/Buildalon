@@ -108,6 +108,7 @@ jobs:
 
       # Clean up the build artifacts for the next run
       - name: Clean Artifacts
+        if: always()
         shell: pwsh
         run: |
           # Clean Logs
