@@ -44,7 +44,6 @@ jobs:
           version-file: '#PROJECT_PATH_PREFIX#ProjectSettings/ProjectVersion.txt'
 #PROJECT_FILE_PATH_END#
       # Activates the installation with the provided credentials
-      # https://github.com/XRTK/activate-unity-license
       - uses: buildalon/activate-unity-license@v1
         with:
           license: '#LICENSE_CHOICE#' # Chooses license type to use [ Personal, Professional ]
