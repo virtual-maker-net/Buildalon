@@ -40,9 +40,9 @@ jobs:
       # sets -> env.UNITY_PROJECT_PATH
       - uses: buildalon/unity-setup@v1
         with:
-          build-targets: ${{ matrix.build-target }}
+          build-targets: ${{ matrix.build-target }} #PROJECT_FILE_PATH_START#
           version-file: '#PROJECT_PATH_PREFIX#ProjectSettings/ProjectVersion.txt'
-
+#PROJECT_FILE_PATH_END#
       # Activates the installation with the provided credentials
       # https://github.com/XRTK/activate-unity-license
       - uses: buildalon/activate-unity-license@v1
